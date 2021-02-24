@@ -1,0 +1,23 @@
+[package]
+name = "fcode"
+version = "1.0.0"
+authors = ["tijsvd"]
+edition = "2018"
+description = "A binary serialization/deserialization strategy for Serde that supports schema evolution"
+documentation = "https://docs.rs/fcode"
+readme = "README.md"
+homepage = "https://github.com/tijsvd/fcode"
+repository = "https://github.com/tijsvd/fcode"
+license = "MIT"
+keywords = ["serde", "binary", "serialization", "evolution", "schema"]
+categories = ["parsing", "encoding", "network-programming"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+serde = "1"
+thiserror = "1"
+
+[dev-dependencies]
+serde_bytes = "0.11"
+serde = { version="1", features=["derive"] }
