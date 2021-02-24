@@ -14,11 +14,12 @@
 //! * Change a named or anonymous tuple into a struct, as long as fields with the same type appear in the same order.
 //! * Change a tuple enum variant into a struct variant, as long as fields with the same type appear in the same order.
 //! * Change any value into a newtype struct (`i32` -> `Foo(i32)`).
-//! * Change a struct variant or tuple variant into a newtype variant containing a struct/tuple with the same layout.
-//! * Change the size of an integer (e.g. i16 -> i32). Overly large values will cause deserialization error.
-//! * Change the size of a float (f32 -> f64) -- conversion back from f64 to f32 may silently overflow to infinity.
-//! * Change a bool to an unsigned integer -- false maps to 0, true maps to anything not 0.
-//! * Change a unit to bool -- maps to false.
+//! * Change a struct variant or tuple variant into a newtype variant containing a struct/tuple with the same layout
+//!   `Foo { x: i32, y: i32 }` -> `Foo(Foo)` (where `struct Foo { x: i32, y: i32 }`)
+//! * Change the size of an integer (e.g. `i16` -> `i32`). Overly large values will cause deserialization error.
+//! * Change the size of a float (`f32` -> `f64`) -- conversion back from `f64` to `f32` may silently overflow to infinity.
+//! * Change a bool to an integer -- false maps to 0, true maps to anything not 0.
+//! * Change a unit to bool (maps to false) or an integer (maps to 0).
 //! * Change string to bytes. Non-UTF8 bytes will cause error when deserializing to string.
 //! * Extend an enum with a new variant. To make this backwards compatible, the "old" code should have a unit variant
 //!   marked with
@@ -37,9 +38,9 @@
 //! takes a single byte on the wire. Vice versa, a field can be "undeprecated" (re-use of deprecated slot) by changing the
 //! sender before the receiver.
 
-pub mod de;
-pub mod error;
-pub mod ser;
+mod de;
+mod error;
+mod ser;
 mod wire;
 
 #[cfg(test)]
@@ -51,7 +52,7 @@ pub use ser::Serializer;
 
 use serde::{Deserialize, Serialize};
 
-/// Serialize the value into a new vector.
+/// Serialize a value into a new byte vector.
 #[inline]
 pub fn to_bytes<T>(value: &T) -> Result<Vec<u8>>
 where
@@ -62,8 +63,9 @@ where
 	Ok(v)
 }
 
-/// Serialize the value to a `std::io::Write` implementation. Use this to extend a `Vec<u8>`, or
-/// feed into some compressor.
+/// Serialize a value to a [`io::Write`](std::io::Write) implementation.
+///
+/// Use this to extend a `Vec<u8>`, or feed into some compressor.
 #[inline]
 pub fn to_writer<T, W>(w: &mut W, value: &T) -> Result<()>
 where
@@ -86,8 +88,9 @@ where
 	Ok(value)
 }
 
-/// Deserialize a value from a byte slice that may have more data. Returns a pair of (value,
-/// size_read).
+/// Deserialize a value from a byte slice that may have more data.
+///
+/// Returns a pair of (value, size_read).
 pub fn from_bytes_more_data<'de, T>(data: &'de [u8]) -> Result<(T, usize)>
 where
 	T: Deserialize<'de>,
