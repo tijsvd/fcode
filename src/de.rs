@@ -139,6 +139,9 @@ impl<'de, 'a> de::Deserializer<'de> for &'a mut Deserializer<'de> {
 
 	#[inline]
 	fn deserialize_i32<V: Visitor<'de>>(self, visitor: V) -> Result<V::Value> {
+		// for 32-bit and 64-bit ints, we allow the Fixed32/Fixed64 wire type, for the
+		// case where perhaps someday we can tell serde that a value is not suitable
+		// as a varint (e.g. a hash value or other semi-random ID).
 		let tagbyte = self.read_byte()?;
 		let v: i32 = match wire::read_wiretype(tagbyte) {
 			WireType::Int => wire::zigzag_decode(self.read_varint(tagbyte)?).try_into()?,

@@ -5,17 +5,17 @@ use crate::{
 use serde::{ser, Serialize};
 use std::io::Write;
 
-pub struct Serializer<'a, B: Write + 'a> {
-	writer: &'a mut B,
+pub struct Serializer<'a, W: Write + 'a> {
+	writer: &'a mut W,
 }
 
-impl<'a, B: Write + 'a> Serializer<'a, B> {
-	pub fn new(writer: &'a mut B) -> Self {
+impl<'a, W: Write + 'a> Serializer<'a, W> {
+	pub fn new(writer: &'a mut W) -> Self {
 		Serializer { writer }
 	}
 }
 
-impl<'a, B: Write + 'a> ser::Serializer for Serializer<'a, B> {
+impl<'a, W: Write + 'a> ser::Serializer for Serializer<'a, W> {
 	type Ok = ();
 	type Error = Error;
 	type SerializeSeq = Self;
@@ -219,7 +219,7 @@ impl<'a, B: Write + 'a> ser::Serializer for Serializer<'a, B> {
 	}
 }
 
-impl<'a, B: Write + 'a> ser::SerializeSeq for Serializer<'a, B> {
+impl<'a, W: Write + 'a> ser::SerializeSeq for Serializer<'a, W> {
 	type Ok = ();
 	type Error = Error;
 	#[inline]
@@ -232,7 +232,7 @@ impl<'a, B: Write + 'a> ser::SerializeSeq for Serializer<'a, B> {
 	}
 }
 
-impl<'a, B: Write + 'a> ser::SerializeMap for Serializer<'a, B> {
+impl<'a, W: Write + 'a> ser::SerializeMap for Serializer<'a, W> {
 	type Ok = ();
 	type Error = Error;
 	#[inline]
@@ -249,7 +249,7 @@ impl<'a, B: Write + 'a> ser::SerializeMap for Serializer<'a, B> {
 	}
 }
 
-impl<'a, B: Write + 'a> ser::SerializeStruct for Serializer<'a, B> {
+impl<'a, W: Write + 'a> ser::SerializeStruct for Serializer<'a, W> {
 	type Ok = ();
 	type Error = Error;
 	#[inline]
@@ -265,7 +265,7 @@ impl<'a, B: Write + 'a> ser::SerializeStruct for Serializer<'a, B> {
 	}
 }
 
-impl<'a, B: Write + 'a> ser::SerializeStructVariant for Serializer<'a, B> {
+impl<'a, W: Write + 'a> ser::SerializeStructVariant for Serializer<'a, W> {
 	type Ok = ();
 	type Error = Error;
 	#[inline]
@@ -281,7 +281,7 @@ impl<'a, B: Write + 'a> ser::SerializeStructVariant for Serializer<'a, B> {
 	}
 }
 
-impl<'a, B: Write + 'a> ser::SerializeTuple for Serializer<'a, B> {
+impl<'a, W: Write + 'a> ser::SerializeTuple for Serializer<'a, W> {
 	type Ok = ();
 	type Error = Error;
 	#[inline]
@@ -294,7 +294,7 @@ impl<'a, B: Write + 'a> ser::SerializeTuple for Serializer<'a, B> {
 	}
 }
 
-impl<'a, B: Write + 'a> ser::SerializeTupleVariant for Serializer<'a, B> {
+impl<'a, W: Write + 'a> ser::SerializeTupleVariant for Serializer<'a, W> {
 	type Ok = ();
 	type Error = Error;
 	#[inline]
@@ -307,7 +307,7 @@ impl<'a, B: Write + 'a> ser::SerializeTupleVariant for Serializer<'a, B> {
 	}
 }
 
-impl<'a, B: Write + 'a> ser::SerializeTupleStruct for Serializer<'a, B> {
+impl<'a, W: Write + 'a> ser::SerializeTupleStruct for Serializer<'a, W> {
 	type Ok = ();
 	type Error = Error;
 	#[inline]

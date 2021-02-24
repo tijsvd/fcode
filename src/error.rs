@@ -4,28 +4,34 @@ pub type Result<T> = std::result::Result<T, Error>;
 
 #[derive(Debug, Error)]
 pub enum Error {
-	#[error("sequence or map is too long (max 4B entries)")]
-	OverlyLongSequence,
-	#[error("byte slice, string, or struct is too long (max 4GB)")]
-	Oversized,
+	/// The input was incomplete.
 	#[error("unexpected end of input")]
 	UnexpectedEndOfInput,
+	/// The value read was not a valid `char`.
 	#[error("invalid character")]
 	InvalidChar,
+	/// The byte array read did not contain valid UTF-8.
 	#[error("invalid UTF-8 data")]
 	InvalidUtf8,
+	/// The input was longer than expected. If it was expected, please use [`from_bytes_more_data`](fn@crate::from_bytes_more_data).
 	#[error("data beyond end")]
 	DataBeyondEnd,
+	/// The value read doesn't fit into the expected integer type.
 	#[error("data value too large")]
 	ValueOverflow,
+	/// The wire type of the value doesn't match the expected type
 	#[error("unexpected wire type")]
 	UnexpectedWireType,
+	/// A sequence with an odd number of elements was read, which is invalid for a map.
 	#[error("invalid map encoding")]
 	InvalidMap,
+	/// Serde framework error.
 	#[error("serialization error: {0}")]
 	Serialization(String),
+	/// Serde framework error.
 	#[error("deserialization error: {0}")]
 	Deserialization(String),
+	/// I/O error in writer.
 	#[error("I/O error: {0}")]
 	IO(#[source] std::io::Error),
 }
