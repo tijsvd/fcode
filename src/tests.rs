@@ -462,3 +462,9 @@ fn skip_field() {
 
 	assert_eq!(ser_de!(Foo { x: 42, y: 43, z: 44 }), Foo { x: 42, y: 0, z: 44 });
 }
+
+#[test]
+fn test_readme_varint_example() {
+    let v = to_bytes(&10042u32).unwrap();
+    assert_eq!(v, vec![0xd0, 0xf3, 0x04]);
+}
