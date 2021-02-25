@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package monster;
+
+enum Enum {
+	Apples = 0;
+	Pears = 1;
+	Bananas = 2;
+}
+
+message Foo {
+	uint64 id = 1;
+	sint32 count = 2;
+	sint32 prefix = 3;
+	uint32 length = 4;
+}
+
+message Bar {
+	Foo parent = 1;
+	sint32 time = 2;
+	float ratio = 3;
+	uint32 size = 4;
+}
+
+message FooBar {
+	Bar sibling = 1;
+	string name = 2;
+	double rating = 3;
+	uint32 postfix = 4;
+}
+
+message FooBarContainer {
+	repeated FooBar list = 1;
+	bool initialized = 2;
+	Enum fruit = 3;
+	string location = 4;
+}
