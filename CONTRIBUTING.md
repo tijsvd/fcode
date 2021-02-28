@@ -1,6 +1,6 @@
-This project is open to obvious bug fixes and perf improvements. Please contact before just sending a PR.
+This project will not, at the moment, accept PRs. 
 
-It is also open to suggestions for great improvements, but please be prepared for rejections.
+We're open for obvious bug reports, and for suggestions wrt perf improvements; please open a ticket on GitHub. 
 
 I don't really have time or patience for suggestions for things to be changed without measurable improvement -- if you
 don't like the coding style, want a different API (e.g. based on Bytes/BytesMut), etc., feel free to fork and go your
