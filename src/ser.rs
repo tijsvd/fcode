@@ -92,7 +92,7 @@ impl<'a, W: Write + 'a> ser::Serializer for Serializer<'a, W> {
 	fn serialize_f32(self, v: f32) -> Result<()> {
 		let mut b = [0u8; 5];
 		b[0] = WireType::Fixed32 as u8;
-		(&mut b[1..]).copy_from_slice(&v.to_le_bytes()[..]);
+		b[1..].copy_from_slice(&v.to_le_bytes()[..]);
 		self.writer.write_all(&b[..])?;
 		Ok(())
 	}
@@ -101,7 +101,7 @@ impl<'a, W: Write + 'a> ser::Serializer for Serializer<'a, W> {
 	fn serialize_f64(self, v: f64) -> Result<()> {
 		let mut b = [0u8; 9];
 		b[0] = WireType::Fixed64 as u8;
-		(&mut b[1..]).copy_from_slice(&v.to_le_bytes()[..]);
+		b[1..].copy_from_slice(&v.to_le_bytes()[..]);
 		self.writer.write_all(&b[..])?;
 		Ok(())
 	}

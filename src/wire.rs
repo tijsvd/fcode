@@ -32,7 +32,7 @@ pub fn write_varint(writer: &mut impl Write, tag: WireType, mut value: u64) -> R
 	let partial = ((value & 15) << 3) as u8;
 	value >>= 4;
 	if value == 0 {
-		writer.write(&[tag | partial])?;
+		writer.write_all(&[tag | partial])?;
 		return Ok(());
 	}
 	// 10 bytes supports 4 + 9 * 7 = 67 bits of data
@@ -125,7 +125,7 @@ serde::serde_if_integer128! {
 		let partial = ((value & 15) << 3) as u8;
 		value >>= 4;
 		if value == 0 {
-			writer.write(&[tag | partial])?;
+			writer.write_all(&[tag | partial])?;
 			return Ok(());
 		}
 		// 19 bytes supports 4 + 18 x 7 = 130 bits of data

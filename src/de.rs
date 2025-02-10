@@ -49,7 +49,7 @@ impl<'de> Deserializer<'de> {
 
 	#[inline]
 	fn read_byte(&mut self) -> Result<u8> {
-		let &b = self.input.get(0).ok_or_else(|| Error::UnexpectedEndOfInput)?;
+		let &b = self.input.first().ok_or(Error::UnexpectedEndOfInput)?;
 		self.input = &self.input[1..];
 		Ok(b)
 	}
@@ -110,11 +110,15 @@ impl<'de> Deserializer<'de> {
 	}
 }
 
-impl<'de, 'a> de::Deserializer<'de> for &'a mut Deserializer<'de> {
+impl<'de> de::Deserializer<'de> for &'_ mut Deserializer<'de> {
 	type Error = Error;
 
 	fn deserialize_any<V: Visitor<'de>>(self, _visitor: V) -> Result<V::Value> {
 		unimplemented!()
+	}
+
+	fn is_human_readable(&self) -> bool {
+		false
 	}
 
 	#[inline]
@@ -443,7 +447,7 @@ pub struct SeqRead<'de, 'a> {
 
 // this is for the case when an overly long struct or tuple is received, or not the entire sequence is read for another
 // reason, or the variant is not accessed (in #[serde(other)])
-impl<'de, 'a> Drop for SeqRead<'de, 'a> {
+impl Drop for SeqRead<'_, '_> {
 	#[inline]
 	fn drop(&mut self) {
 		while self.nread > 0 {
@@ -455,7 +459,7 @@ impl<'de, 'a> Drop for SeqRead<'de, 'a> {
 	}
 }
 
-impl<'de, 'a> SeqAccess<'de> for SeqRead<'de, 'a> {
+impl<'de> SeqAccess<'de> for SeqRead<'de, '_> {
 	type Error = Error;
 	#[inline]
 	fn next_element_seed<T: DeserializeSeed<'de>>(&mut self, seed: T) -> Result<Option<T::Value>> {
@@ -473,7 +477,7 @@ impl<'de, 'a> SeqAccess<'de> for SeqRead<'de, 'a> {
 	}
 }
 
-impl<'de, 'a> VariantAccess<'de> for SeqRead<'de, 'a> {
+impl<'de> VariantAccess<'de> for SeqRead<'de, '_> {
 	type Error = Error;
 
 	#[inline]
@@ -498,7 +502,7 @@ impl<'de, 'a> VariantAccess<'de> for SeqRead<'de, 'a> {
 	}
 }
 
-impl<'de, 'a> MapAccess<'de> for SeqRead<'de, 'a> {
+impl<'de> MapAccess<'de> for SeqRead<'de, '_> {
 	type Error = Error;
 	#[inline]
 	fn next_key_seed<T: DeserializeSeed<'de>>(&mut self, seed: T) -> Result<Option<T::Value>> {

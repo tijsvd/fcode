@@ -13,8 +13,8 @@ macro_rules! ser_de {
 
 #[test]
 fn test_basic_types() {
-	assert_eq!(ser_de!(true), true);
-	assert_eq!(ser_de!(false), false);
+	assert!(ser_de!(true));
+	assert!(!ser_de!(false));
 	assert_eq!(ser_de!(42i8), 42);
 	assert_eq!(ser_de!(42i16), 42);
 	assert_eq!(ser_de!(42i32), 42);
@@ -33,7 +33,7 @@ fn test_basic_types() {
 	assert_eq!(ser_de!(Some(42i32)), Some(42));
 	assert_eq!(ser_de!(None::<i32>), None);
 
-	assert_eq!(ser_de!(()), ());
+	ser_de!(());
 
 	assert_eq!(ser_de!(vec![1, 2, 3]), vec![1, 2, 3]);
 	assert_eq!(ser_de!(vec![1u8, 2u8, 3u8]), vec![1u8, 2u8, 3u8]);
@@ -121,7 +121,7 @@ fn test_struct() {
 		y: String,
 		z: Vec<i32>,
 		i: Inner,
-	};
+	}
 
 	let value = Foo {
 		x: 42,
@@ -203,9 +203,9 @@ struct ShortStruct {
 	x: i32,
 	y: i32,
 }
-impl Into<ShortStruct> for LongStruct {
-	fn into(self: LongStruct) -> ShortStruct {
-		ShortStruct { x: self.x, y: self.y }
+impl From<LongStruct> for ShortStruct {
+	fn from(s: LongStruct) -> Self {
+		ShortStruct { x: s.x, y: s.y }
 	}
 }
 
@@ -249,9 +249,9 @@ fn test_short_struct_to_long() {
 struct LongTuple(i32, i32, #[serde(default)] i32);
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 struct ShortTuple(i32, i32);
-impl Into<ShortTuple> for LongTuple {
-	fn into(self: LongTuple) -> ShortTuple {
-		ShortTuple(self.0, self.1)
+impl From<LongTuple> for ShortTuple {
+	fn from(t: LongTuple) -> Self {
+		ShortTuple(t.0, t.1)
 	}
 }
 
@@ -312,7 +312,7 @@ fn type_to_newtype() {
 
 	let src = vec![Foo(1, 2), Foo(3, 4), Foo(5, 6)];
 	let dest: Vec<Bar> = from_bytes(&to_bytes(&src).unwrap()).unwrap();
-	let expected: Vec<Bar> = src.iter().cloned().map(|f| Bar(f)).collect();
+	let expected: Vec<Bar> = src.iter().cloned().map(Bar).collect();
 	assert_eq!(dest, expected);
 }
 
@@ -465,6 +465,6 @@ fn skip_field() {
 
 #[test]
 fn test_readme_varint_example() {
-    let v = to_bytes(&10042u32).unwrap();
-    assert_eq!(v, vec![0xd0, 0xf3, 0x04]);
+	let v = to_bytes(&10042u32).unwrap();
+	assert_eq!(v, vec![0xd0, 0xf3, 0x04]);
 }
